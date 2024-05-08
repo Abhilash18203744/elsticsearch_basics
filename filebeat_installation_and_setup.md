@@ -57,7 +57,8 @@
     enabled: true
     ca_trusted_fingerprint: "b9a10bbe64ee9826abeda6546fc988c8bf798b41957c33d05db736716513dc9c" 
   ```
-  Note: The fingerprint is printed on Elasticsearch start up logs, or you can retrieve it from crt file as follows. (refer_link_for_crt)[https://www.elastic.co/guide/en/elasticsearch/reference/8.0/configuring-stack-security.html#_connect_clients_to_elasticsearch_5]
+  Note: The fingerprint is printed on Elasticsearch start up logs, or you can retrieve it from crt file as follows. 
+  [refer_link_for_crt](https://www.elastic.co/guide/en/elasticsearch/reference/8.0/configuring-stack-security.html#_connect_clients_to_elasticsearch_5)
   When you start Elasticsearch for the first time, TLS is configured automatically for the HTTP layer. A CA certificate is generated and stored on disk at:
   ```bash
   /etc/elasticsearch/certs/http_ca.crt
@@ -71,3 +72,39 @@
   The command returns the security certificate, including the fingerprint. The issuer should be Elasticsearch security auto-configuration HTTP CA.
 
   Note: If your library doesn’t support a method of validating the fingerprint, the auto-generated CA certificate is created on each Elasticsearch node. Copy the http_ca.crt file to your machine and configure your client to use this certificate to establish trust when it connects to Elasticsearch.
+
+## Step 3: Collecting Data
+  There are several ways to collect log data with Filebeat:
+  
+  - Data collection modules — simplify the collection, parsing, and visualization of common log formats [Enable_configure_data_collection_modules](https://www.elastic.co/guide/en/beats/filebeat/current/filebeat-installation-configuration.html#enable-modules)
+  - ECS loggers — structure and format application logs into ECS-compatible JSON
+  - Manual Filebeat configuration
+  
+  ### Manual Filebeat configuration
+  To configure Filebeat manually (instead of using modules), you specify a list of inputs in the filebeat.inputs section of the filebeat.yml. Inputs specify how Filebeat locates and processes input data.
+  
+  The list is a YAML array, so each input begins with a dash (-). You can specify multiple inputs, and you can specify the same input type more than once. For example:
+  ```bash
+  filebeat.inputs:
+  - type: filestream
+    id: my-filestream-id 
+    paths:
+      - /var/log/system.log
+      - /var/log/wifi.log
+  - type: filestream
+    id: apache-filestream-id
+    paths:
+      - "/var/log/apache2/*"
+    fields:
+      apache: true
+    fields_under_root: true
+  ```
+## Step 4: Set up assets
+Filebeat comes with predefined assets for parsing, indexing, and visualizing your data. To load these assets:
+1. Make sure the user specified in filebeat.yml is authorized to set up Filebeat.
+2. From the installation directory, run:
+   ```bash
+    ./filebeat setup -e
+   ```
+   -e is optional and sends output to standard error instead of the configured log output.
+   This step loads the recommended index template for writing to Elasticsearch and deploys the sample dashboards for visualizing the data in Kibana.
