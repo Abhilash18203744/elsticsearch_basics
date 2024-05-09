@@ -108,3 +108,12 @@ Filebeat comes with predefined assets for parsing, indexing, and visualizing you
    ```
    -e is optional and sends output to standard error instead of the configured log output.
    This step loads the recommended index template for writing to Elasticsearch and deploys the sample dashboards for visualizing the data in Kibana.
+
+## Step 5: Start Filebeat
+Before starting Filebeat, modify the user credentials in filebeat.yml and specify a user who is authorized to publish events.
+To start Filebeat, run:
+   ```bash
+    sudo chown root filebeat.yml
+    sudo ./filebeat -e
+   ```
+You’ll be running Filebeat as root, so you need to change ownership of the configuration file and any configurations enabled in the modules.d directory, or run Filebeat with --strict.perms=false specified.
