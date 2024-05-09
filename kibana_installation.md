@@ -19,3 +19,18 @@ When you start Elasticsearch for the first time, the following security configur
 
 You can then start Kibana and enter the enrollment token to securely connect Kibana with Elasticsearch. The enrollment token is valid for specified time.
 
+If Kibana service running on port 5601 is not accessible from a different server, it indicates a networking issue. Here are some steps to troubleshoot and resolve the problem:
+1. Firewall Rules: Ensure that the firewall on the server running Kibana allows incoming connections on port 5601. You can check and update the firewall rules based on your operating system. For example, using iptables on Linux:
+  ```bash
+  sudo iptables -I INPUT -p tcp --dport 5601 -j ACCEPT
+  ```
+Or using firewalld:
+  ```bash
+  sudo firewall-cmd --zone=public --add-port=5601/tcp --permanent
+  sudo firewall-cmd --reload
+  ```
+2. Check if Kibana is configured to bind to the correct network interface or IP address. By default, Kibana binds to localhost only. You may need to update the server.host setting in the kibana.yml configuration file to bind to 0.0.0.0 or the specific IP address of the server:
+  ```bash
+  server.host: "0.0.0.0"
+  ```
+
