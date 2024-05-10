@@ -117,3 +117,5 @@ To start Filebeat, run:
     sudo ./filebeat -e
    ```
 You’ll be running Filebeat as root, so you need to change ownership of the configuration file and any configurations enabled in the modules.d directory, or run Filebeat with --strict.perms=false specified.
+
+Make sure you add the index name in the elasticsearch query to to point to the correct index of specific filebeat server.
